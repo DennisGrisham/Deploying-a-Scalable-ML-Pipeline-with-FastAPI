@@ -1,17 +1,15 @@
 import json
-
 import requests
 
-# TODO: send a GET using the URL http://127.0.0.1:8000
-r = None # Your code here
+# GET /
+r = requests.get("http://127.0.0.1:8000/")
+print("GET / status:", r.status_code)
+try:
+    print("GET / result:", r.json())
+except Exception as e:
+    print("GET / result (non-JSON):", r.text)
 
-# TODO: print the status code
-# print()
-# TODO: print the welcome message
-# print()
-
-
-
+# Payload for POST /data/
 data = {
     "age": 37,
     "workclass": "Private",
@@ -29,10 +27,15 @@ data = {
     "native-country": "United-States",
 }
 
-# TODO: send a POST using the data above
-r = None # Your code here
+# POST /data/
+r = requests.post(
+    "http://127.0.0.1:8000/data/",
+    headers={"Content-Type": "application/json"},
+    data=json.dumps(data),
+)
+print("POST /data/ status:", r.status_code)
+try:
+    print("POST /data/ result:", r.json())
+except Exception as e:
+    print("POST /data/ result (non-JSON):", r.text)
 
-# TODO: print the status code
-# print()
-# TODO: print the result
-# print()
