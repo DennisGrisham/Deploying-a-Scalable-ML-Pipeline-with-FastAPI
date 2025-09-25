@@ -9,10 +9,12 @@ from ml.data import process_data
 
 
 # ----------------------------- Training -----------------------------
-def train_model(X_train: np.ndarray, y_train: np.ndarray) -> LogisticRegression:
+def train_model(
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+) -> LogisticRegression:
     """
-    Trains a machine learning model and returns it.
-    Uses a compact LogisticRegression baseline to keep model artifact small.
+    Train a simple Logistic Regression model and return it.
     """
     model = LogisticRegression(
         solver="lbfgs",
@@ -24,10 +26,14 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray) -> LogisticRegression:
     return model
 
 
-# ----------------------------- Metrics -----------------------------
-def compute_model_metrics(y: np.ndarray, preds: np.ndarray) -> Tuple[float, float, float]:
+# ----------------------------- Metrics ------------------------------
+def compute_model_metrics(
+    y: np.ndarray,
+    preds: np.ndarray,
+) -> Tuple[float, float, float]:
     """
-    Validates the trained model using precision, recall, and F1 (fbeta with beta=1).
+    Validate a trained model using precision, recall, and F1
+    (fbeta with beta=1).
     """
     fbeta = fbeta_score(y, preds, beta=1, zero_division=1)
     precision = precision_score(y, preds, zero_division=1)
@@ -35,33 +41,27 @@ def compute_model_metrics(y: np.ndarray, preds: np.ndarray) -> Tuple[float, floa
     return precision, recall, fbeta
 
 
-# ----------------------------- Inference -----------------------------
+# ----------------------------- Inference ----------------------------
 def inference(model: Any, X: np.ndarray) -> np.ndarray:
-    """
-    Run model inferences and return the predictions.
-    """
+    """Run model inference and return predictions."""
     return model.predict(X)
 
 
-# ----------------------------- Persistence -----------------------------
+# -------------------------- Persistence -----------------------------
 def save_model(model_or_encoder: Any, path: str) -> None:
-    """
-    Serializes a model or encoder to a file with pickle.
-    """
+    """Serialize a model or encoder to a pickle file."""
     with open(path, "wb") as f:
         pickle.dump(model_or_encoder, f)
 
 
 def load_model(path: str) -> Any:
-    """
-    Loads pickle file from `path` and returns it.
-    """
+    """Load a pickle file from `path` and return the object."""
     with open(path, "rb") as f:
         obj = pickle.load(f)
     return obj
 
 
-# ----------------------------- Slice metrics -----------------------------
+# ----------------------- Slice metrics ------------------------------
 def performance_on_categorical_slice(
     data,
     column_name: str,
@@ -73,8 +73,8 @@ def performance_on_categorical_slice(
     model,
 ) -> Tuple[float, float, float]:
     """
-    Computes precision/recall/f1 on a slice of the data defined by (column_name == slice_value).
-    Uses the provided encoder/lb with training=False to ensure consistency with full-test processing.
+    Compute precision/recall/F1 on a data slice
+    where (column_name == slice_value).
     """
     sliced_df = data[data[column_name] == slice_value]
     if sliced_df.shape[0] == 0:
@@ -91,4 +91,3 @@ def performance_on_categorical_slice(
     preds = inference(model, X_slice)
     precision, recall, fbeta = compute_model_metrics(y_slice, preds)
     return precision, recall, fbeta
-

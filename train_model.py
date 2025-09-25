@@ -26,7 +26,10 @@ data = pd.read_csv(DATA_PATH)
 
 # Split into train / test (stratify on label to preserve class balance)
 train, test = train_test_split(
-    data, test_size=0.2, random_state=42, stratify=data["salary"]
+    data,
+    test_size=0.2,
+    random_state=42,
+    stratify=data["salary"],
 )
 
 # DO NOT MODIFY
@@ -78,7 +81,10 @@ preds = inference(model, X_test)
 
 # Overall metrics
 p, r, fb = compute_model_metrics(y_test, preds)
-print(f"Precision: {p:.4f} | Recall: {r:.4f} | F1: {fb:.4f}")
+print(
+    "Precision: "
+    f"{p:.4f} | Recall: {r:.4f} | F1: {fb:.4f}"
+)
 
 # Slice metrics → slice_output.txt (fresh each run)
 slice_output_path = PROJECT_PATH / "slice_output.txt"
@@ -100,8 +106,14 @@ for col in cat_features:
             model=model,
         )
         with open(slice_output_path, "a") as f:
-            print(f"{col}: {slicevalue}, Count: {count:,}", file=f)
-            print(f"Precision: {sp:.4f} | Recall: {sr:.4f} | F1: {sfb:.4f}", file=f)
+            print(
+                f"{col}: {slicevalue}, Count: {count:,}",
+                file=f,
+            )
+            print(
+                "Precision: "
+                f"{sp:.4f} | Recall: {sr:.4f} | F1: {sfb:.4f}",
+                file=f,
+            )
 
 print(f"Slice metrics written to: {slice_output_path}")
-

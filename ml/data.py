@@ -3,46 +3,50 @@ from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
 
 def process_data(
-    X, categorical_features=[], label=None, training=True, encoder=None, lb=None
+    X,
+    categorical_features=None,
+    label=None,
+    training=True,
+    encoder=None,
+    lb=None,
 ):
-    """ Process the data used in the machine learning pipeline.
+    """
+    Process the data used in the ML pipeline.
 
-    Processes the data using one hot encoding for the categorical features and a
-    label binarizer for the labels. This can be used in either training or
-    inference/validation.
+    One-hot encodes categorical features and binarizes labels.
+    Works for both training and inference.
 
-    Note: depending on the type of model used, you may want to add in functionality that
-    scales the continuous data.
+    Note: depending on the model, you may also want to scale continuous
+    features.
 
     Inputs
     ------
     X : pd.DataFrame
-        Dataframe containing the features and label. Columns in `categorical_features`
-    categorical_features: list[str]
-        List containing the names of the categorical features (default=[])
+        Data with features and (optionally) the label column.
+    categorical_features : list[str]
+        Names of categorical feature columns.
     label : str
-        Name of the label column in `X`. If None, then an empty array will be returned
-        for y (default=None)
+        Name of the label column in X. If None, returns empty y array.
     training : bool
-        Indicator if training mode or inference/validation mode.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained sklearn OneHotEncoder, only used if training=False.
-    lb : sklearn.preprocessing._label.LabelBinarizer
-        Trained sklearn LabelBinarizer, only used if training=False.
+        If True, fit encoders on X; otherwise use provided encoders.
+    encoder : sklearn.preprocessing.OneHotEncoder
+        Trained OneHotEncoder (used when training=False).
+    lb : sklearn.preprocessing.LabelBinarizer
+        Trained LabelBinarizer (used when training=False).
 
     Returns
     -------
-    X : np.array
-        Processed data.
-    y : np.array
-        Processed labels if labeled=True, otherwise empty np.array.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained OneHotEncoder if training is True, otherwise returns the encoder passed
-        in.
-    lb : sklearn.preprocessing._label.LabelBinarizer
-        Trained LabelBinarizer if training is True, otherwise returns the binarizer
-        passed in.
+    X : np.ndarray
+        Processed feature matrix.
+    y : np.ndarray
+        Processed labels if label is not None, else empty array.
+    encoder : OneHotEncoder
+        Fitted encoder if training=True; otherwise the input encoder.
+    lb : LabelBinarizer
+        Fitted binarizer if training=True; otherwise the input binarizer.
     """
+    if categorical_features is None:
+        categorical_features = []
 
     if label is not None:
         y = X[label]
@@ -53,8 +57,11 @@ def process_data(
     X_categorical = X[categorical_features].values
     X_continuous = X.drop(*[categorical_features], axis=1)
 
-    if training is True:
-        encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
+    if training:
+        encoder = OneHotEncoder(
+            sparse_output=False,
+            handle_unknown="ignore",
+        )
         lb = LabelBinarizer()
         X_categorical = encoder.fit_transform(X_categorical)
         y = lb.fit_transform(y.values).ravel()
@@ -62,15 +69,16 @@ def process_data(
         X_categorical = encoder.transform(X_categorical)
         try:
             y = lb.transform(y.values).ravel()
-        # Catch the case where y is None because we're doing inference.
         except AttributeError:
+            # y is None at inference time
             pass
 
     X = np.concatenate([X_continuous, X_categorical], axis=1)
     return X, y, encoder, lb
 
+
 def apply_label(inference):
-    """ Convert the binary label in a single inference sample into string output."""
+    """Convert a single binary prediction into the string label."""
     if inference[0] == 1:
         return ">50K"
     elif inference[0] == 0:

@@ -25,11 +25,17 @@ def small_data():
     data_path = Path(__file__).resolve().parent / "data" / "census.csv"
     df = pd.read_csv(data_path, nrows=500)  # small, fast
     train_df, test_df = train_test_split(
-        df, test_size=0.2, random_state=42, stratify=df["salary"]
+        df,
+        test_size=0.2,
+        random_state=42,
+        stratify=df["salary"],
     )
 
     X_train, y_train, encoder, lb = process_data(
-        train_df, categorical_features=CAT_FEATURES, label="salary", training=True
+        train_df,
+        categorical_features=CAT_FEATURES,
+        label="salary",
+        training=True,
     )
 
     X_test, y_test, _, _ = process_data(
@@ -47,7 +53,10 @@ def test_process_data_shapes(small_data):
     X_train, y_train, X_test, y_test = small_data
     assert X_train.ndim == 2 and X_test.ndim == 2
     assert y_train.ndim == 1 and y_test.ndim == 1
-    assert X_train.shape[0] == y_train.shape[0] and X_train.shape[0] > 0
+    assert (
+        X_train.shape[0] == y_train.shape[0]
+        and X_train.shape[0] > 0
+    )
     assert X_test.shape[0] == y_test.shape[0] and X_test.shape[0] > 0
 
 
@@ -67,4 +76,3 @@ def test_compute_model_metrics_known_values():
     assert np.isclose(p, 2 / 3)
     assert np.isclose(r, 2 / 3)
     assert np.isclose(f1, 2 / 3)
-

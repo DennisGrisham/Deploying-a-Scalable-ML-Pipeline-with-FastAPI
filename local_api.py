@@ -6,7 +6,7 @@ r = requests.get("http://127.0.0.1:8000/")
 print("GET / status:", r.status_code)
 try:
     print("GET / result:", r.json())
-except Exception as e:
+except Exception:
     print("GET / result (non-JSON):", r.text)
 
 # Payload for POST /data/
@@ -36,6 +36,5 @@ r = requests.post(
 print("POST /data/ status:", r.status_code)
 try:
     print("POST /data/ result:", r.json())
-except Exception as e:
+except Exception:
     print("POST /data/ result (non-JSON):", r.text)
-
