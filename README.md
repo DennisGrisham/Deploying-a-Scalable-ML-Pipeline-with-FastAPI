@@ -1,5 +1,7 @@
 # Deploying a Scalable ML Pipeline with FastAPI
 
+GitHub Repository: [DennisGrisham/Deploying-a-Scalable-ML-Pipeline-with-FastAPI](https://github.com/DennisGrisham/Deploying-a-Scalable-ML-Pipeline-with-FastAPI)
+
 This project demonstrates an end-to-end ML pipeline built with FastAPI. It trains a model on the Census Income dataset, evaluates its performance on feature slices, and serves predictions through a REST API with unit tests and CI/CD.
 
 
